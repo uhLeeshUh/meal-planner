@@ -1,17 +1,18 @@
 from sqlalchemy import Column, Integer, String, Text, Float, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import mapped_column, Mapped, relationship
 from app.core.database import Base
+from app.models.base_model import BaseModel
 
-class Recipe(Base):
+class Recipe(BaseModel):
     __tablename__ = "recipes"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    description = Column(Text)
-    instructions = Column(Text)
-    prep_time = Column(Integer)  # in minutes
-    cook_time = Column(Integer)  # in minutes
-    servings = Column(Integer)
+    name: Mapped[str] = mapped_column(String, index=True, nullable=False)
+    prep_instructions: Mapped[str | None] = mapped_column(Text)
+    cooking_instructions: Mapped[str] = mapped_column(Text, nullable=False)
+    prep_time: Mapped[int | None] = mapped_column(Integer)  # in minutes
+    cook_time: Mapped[int] = mapped_column(Integer, nullable=False)  # in minutes
+    servings: Mapped[int | None] = mapped_column(Integer)
+    image_url: Mapped[str | None] = mapped_column(String)
     
     # Relationships will be added here as we create more models
     # ingredients = relationship("Ingredient", back_populates="recipe") 
