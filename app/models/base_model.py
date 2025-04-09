@@ -1,8 +1,8 @@
-from app.core.database import Base
-from sqlalchemy.dialects.postgresql import UUID
-import uuid
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.dialects.postgresql import UUID
+from app.core.database import Base
+import uuid
 
 class BaseModel(Base):
     __abstract__ = True  # This tells SQLAlchemy this is an abstract base class
@@ -12,4 +12,4 @@ class BaseModel(Base):
     # This ensures all subclasses must define __tablename__
     @declared_attr
     def __tablename__(cls) -> str:
-        raise NotImplementedError("All models must define __tablename__")
+        raise NotImplementedError("All models must define __tablename__") 
