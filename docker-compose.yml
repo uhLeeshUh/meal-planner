@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # Python Web App
+  web:
+    build: .
+    container_name: meal_planner
+    ports:
+      - "8000:8000"  # (app will be accessible at localhost:8000)
+    volumes:
+      - ./app:/app/app  # Mount only the app directory
+      - ./requirements.txt:/app/requirements.txt  # Mount requirements separately
+    depends_on:
+      - db  # Ensure the web app starts after the DB container
+    environment:
+      - DATABASE_URL=postgresql://username:password@db:5432/mealplannerdb  # Connection string
+
+  # PostgreSQL Database
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mealplannerdb  # You can choose a different database name
+    ports:
+      - "5432:5432"  # Exposes Postgres on localhost:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Persists data between restarts
+
+volumes:
+  postgres_data:  # Named volume for persistent DB storage
