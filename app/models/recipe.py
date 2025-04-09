@@ -1,7 +1,6 @@
-from sqlalchemy import Column, Integer, String, Text, Float, ForeignKey
-from sqlalchemy.orm import mapped_column, Mapped, relationship
-from app.core.database import Base
+from sqlalchemy import String, Integer, Text
 from app.models.base_model import BaseModel
+from sqlalchemy.orm import mapped_column, Mapped
 
 class Recipe(BaseModel):
     __tablename__ = "recipes"
@@ -15,4 +14,4 @@ class Recipe(BaseModel):
     image_url: Mapped[str | None] = mapped_column(String)
     
     # Relationships will be added here as we create more models
-    # ingredients = relationship("Ingredient", back_populates="recipe") 
+    # ingredients = relationship("Ingredient", back_populates="recipe")

@@ -2,6 +2,14 @@ from app.core.database import Base
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.ext.declarative import declared_attr
 
 class BaseModel(Base):
+    __abstract__ = True  # This tells SQLAlchemy this is an abstract base class
+    
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    
+    # This ensures all subclasses must define __tablename__
+    @declared_attr
+    def __tablename__(cls) -> str:
+        raise NotImplementedError("All models must define __tablename__")
