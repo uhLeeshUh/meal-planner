@@ -1,12 +1,13 @@
 from app.core.database import SessionLocal
 from app.models.recipe import Recipe
+from app.schemas.recipe import RecipeCreate
 
 def seed_recipes():
     db = SessionLocal()
     try:
-        # Sample recipes
-        recipes = [
-            Recipe(
+        # Sample recipes using Pydantic schemas for validation
+        recipe_schemas = [
+            RecipeCreate(
                 name="Spaghetti Carbonara",
                 prep_instructions="1. Bring a large pot of salted water to boil\n2. Cook spaghetti according to package instructions",
                 cooking_instructions="1. Cook pancetta until crispy\n2. Mix eggs and cheese\n3. Combine hot pasta with egg mixture and pancetta\n4. Add black pepper to taste",
@@ -15,7 +16,7 @@ def seed_recipes():
                 servings=4,
                 image_url="https://example.com/carbonara.jpg"
             ),
-            Recipe(
+            RecipeCreate(
                 name="Classic Burger",
                 prep_instructions="1. Form patties\n2. Season with salt and pepper",
                 cooking_instructions="1. Grill patties for 4-5 minutes per side\n2. Add cheese if desired\n3. Toast buns\n4. Assemble with lettuce, tomato, and onion",
@@ -24,7 +25,7 @@ def seed_recipes():
                 servings=4,
                 image_url="https://example.com/burger.jpg"
             ),
-            Recipe(
+            RecipeCreate(
                 name="Greek Salad",
                 prep_instructions="1. Wash and chop vegetables\n2. Cube feta cheese",
                 cooking_instructions="1. Combine all ingredients in a large bowl\n2. Toss with olive oil and lemon juice\n3. Season with salt and oregano",
@@ -35,8 +36,9 @@ def seed_recipes():
             )
         ]
 
-        # Add recipes to database
-        for recipe in recipes:
+        # Convert schemas to models and add to database
+        for schema in recipe_schemas:
+            recipe = Recipe.from_schema(schema)
             db.add(recipe)
         
         db.commit()
