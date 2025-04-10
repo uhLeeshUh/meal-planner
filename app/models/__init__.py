@@ -1,5 +1,7 @@
 from app.models.recipe import Recipe
 from app.models.base_model import BaseModel
+from app.models.ingredient import Ingredient
+from app.models.recipe_ingredient import RecipeIngredient
 
 # Add new models here as you create them
 # from app.models.new_model import NewModel
@@ -7,5 +9,7 @@ from app.models.base_model import BaseModel
 __all__ = [
     'Recipe',
     'BaseModel',
+    'Ingredient',
+    'RecipeIngredient',
     # Add new models to __all__ as you create them
 ] 
