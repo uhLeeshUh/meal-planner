@@ -29,9 +29,24 @@ cp .env.example .env
 # Edit .env with your configuration
 ```
 
-4. Run the application:
+4. Start up the postgres docker container
+```bash
+docker-compose up db
+```
+
+5. Run the application:
 ```bash
 uvicorn app.main:app --reload
+```
+
+For migrating the database:
+1. From project root, run a migration after making data model changes:
+```bash
+alembic revision --autogenerate -m "description of your changes"
+```
+2. Apply the change
+```bash
+alembic upgrade head
 ```
 
 The API will be available at `http://localhost:8000`
