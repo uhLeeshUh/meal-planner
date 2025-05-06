@@ -58,9 +58,13 @@ API documentation will be available at `http://localhost:8000/docs`
 meal_planner/
 ├── app/
 │   ├── api/         # API endpoints
-│   ├── core/        # Core functionality
+│   ├── core/        # Core functionality (db setup)
 │   ├── models/      # Database models
-│   └── schemas/     # Pydantic models
+│   └── repositories/# Business logic to interact with database
+│   └── schemas/     # Pydantic models for validation
+│   └── seeds/       # Db seed data
+├── migrations/      # Db migrations, managed by alembic
+├── scripts/         # App-wide scripts
 ├── tests/           # Test files
 ├── requirements.txt # Project dependencies
 └── README.md       # This file
