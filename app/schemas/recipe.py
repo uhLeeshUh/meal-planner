@@ -1,20 +1,24 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import List
+
+from schemas.ingredient import Ingredient
+from schemas.recipe_ingredient import RecipeIngredient
 
 class RecipeBase(BaseModel):
     name: str = Field(..., description="Name of the recipe")
-    prep_instructions: Optional[str] = Field(None, description="Preparation instructions")
+    prep_instructions: str | None = Field(None, description="Preparation instructions")
     cooking_instructions: str = Field(..., description="Cooking instructions")
-    prep_time: Optional[int] = Field(None, description="Preparation time in minutes")
+    prep_time: int | None = Field(None, description="Preparation time in minutes")
     cook_time: int = Field(..., description="Cooking time in minutes")
-    servings: Optional[int] = Field(None, description="Number of servings")
-    image_url: Optional[str] = Field(None, description="URL to recipe image")
+    servings: int | None = Field(None, description="Number of servings")
+    image_url: str | None = Field(None, description="URL to recipe image")
 
 class RecipeCreate(RecipeBase):
-    pass
+    ingredients: List[Ingredient]
 
 class Recipe(RecipeBase):
     id: str  # UUID will be converted to string for JSON
+    recipe_ingredients: List[RecipeIngredient]
 
     class Config:
         from_attributes = True  # Allows conversion from SQLAlchemy model 
