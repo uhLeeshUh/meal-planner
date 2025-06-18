@@ -8,7 +8,7 @@ A FastAPI-based meal planning application that helps users manage their meal pla
 - Store and retrieve recipes
 - Generate shopping lists
 - RESTful API endpoints
-- SQLite database (can be configured for other databases)
+- Postgres database (can be configured for other databases)
 
 ## Setup
 
@@ -75,6 +75,27 @@ meal_planner/
 Run tests with:
 ```bash
 pytest
+```
+
+## One-off Testing
+
+This project has ipython installed, which is an interactive python shell that lets you play around
+with code you've written. 
+
+To test functions one-off as you're building them, this can be preferred to writing a unit test.
+
+To do so, instantiate an ipython shell at the command line with `ipython`
+
+Now in your REPL, you can do things like interact with the db:
+
+```
+from app.core.database import get_db
+
+db = next(get_db())
+
+from app.repositories.ingredients import get_by_name
+
+get_by_name(db, "lemon")
 ```
 
 ## License
