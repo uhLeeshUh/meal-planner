@@ -20,3 +20,7 @@ class BaseModel(Base):
     @declared_attr
     def __tablename__(cls) -> str:
         raise NotImplementedError("All models must define __tablename__") 
+    
+    # basic shallow serialization of models, used for testing
+    def model_to_dict(self) -> dict:
+        return {col.name: getattr(self, col.name) for col in self.__table__.columns}
