@@ -1,7 +1,6 @@
 from sqlalchemy import String, Integer, Text
+from sqlalchemy.orm import mapped_column, Mapped, relationship
 from app.models.base_model import BaseModel
-from sqlalchemy.orm import mapped_column, Mapped
-from app.schemas.recipe import RecipeCreate
 
 class Recipe(BaseModel):
     __tablename__ = "recipes"
@@ -14,10 +13,14 @@ class Recipe(BaseModel):
     servings: Mapped[int | None] = mapped_column(Integer)
     image_url: Mapped[str | None] = mapped_column(String)
     
-    @classmethod
-    def from_schema(cls, schema: RecipeCreate) -> "Recipe":
-        """Create a Recipe instance from a Pydantic schema"""
-        return cls(**schema.model_dump())
+    # @classmethod
+    # def from_schema(cls, schema: RecipeCreate) -> "Recipe":
+    #     """Create a Recipe instance from a Pydantic schema"""
+    #     return cls(**schema.model_dump())
     
-    # Relationships will be added here as we create more models
-    # ingredients = relationship("Ingredient", back_populates="recipe")
+    # Relationships
+    ingredients = relationship(
+        "Ingredient",
+        secondary="recipe_ingredients",
+        back_populates="recipes"
+    )
