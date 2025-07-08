@@ -3,6 +3,9 @@ from pydantic import BaseModel, Field
 class IngredientBase(BaseModel):
     name: str = Field(..., description="Name of the ingredient")
 
+class IngredientCreate(IngredientBase):
+    pass
+
 class Ingredient(IngredientBase):
     id: str  # UUID will be converted to string for JSON
 

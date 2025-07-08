@@ -1,8 +1,8 @@
 from pydantic import BaseModel, Field
 from typing import List
 
-from schemas.ingredient import Ingredient
-from schemas.recipe_ingredient import RecipeIngredient
+from app.schemas.ingredient import Ingredient, IngredientCreate
+from app.schemas.recipe_ingredient import RecipeIngredient
 
 class RecipeBase(BaseModel):
     name: str = Field(..., description="Name of the recipe")
@@ -14,7 +14,7 @@ class RecipeBase(BaseModel):
     image_url: str | None = Field(None, description="URL to recipe image")
 
 class RecipeCreate(RecipeBase):
-    ingredients: List[Ingredient]
+    ingredients: List[Ingredient | IngredientCreate] # allow new ingredients to be created alongside their respective recipes
 
 class Recipe(RecipeBase):
     id: str  # UUID will be converted to string for JSON
