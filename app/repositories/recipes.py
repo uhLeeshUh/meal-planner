@@ -49,7 +49,35 @@ def get_recipes(db: Session, page_number: int = 0, page_size: int = 10) -> list[
     offset = (page_number - 1) * page_size
     return db.query(Recipe).order_by(Recipe.id).offset(offset).limit(page_size).all()
 
-def get_recipe_ingredients_for_recipes(db: Session, recipe_ids: list[UUID]) -> list[RecipeIngredient]:
-    pass
-    # load all recipes, join to recipe ingredients, only return list of recipe ingredients
-    # SELECT ri.* from 
+def get_ingredients_list_for_recipes(db: Session, recipe_ids: list[UUID]) -> list[dict]:
+    """
+    Get aggregated ingredients for a list of recipes.
+    Returns a list of dictionaries with ingredient name, total quantity, and unit.
+    """
+    from app.models.recipe import Recipe
+    from app.models.ingredient import Ingredient
+    from app.models.recipe_ingredient import RecipeIngredient
+    
+    result = db.query(
+        Ingredient.id,
+        func.sum(RecipeIngredient.quantity).label('total_quantity'),
+        RecipeIngredient.unit
+    ).join(
+        RecipeIngredient, Ingredient.id == RecipeIngredient.ingredient_id
+    ).join(
+        Recipe, RecipeIngredient.recipe_id == Recipe.id
+    ).filter(
+        Recipe.id.in_(recipe_ids)
+    ).group_by(
+        Ingredient.id, RecipeIngredient.unit
+    ).all()
+    
+    # Convert to list of dictionaries
+    return [
+        {
+            'ingredient_id': row.id,
+            'total_quantity': row.total_quantity,
+            'unit': row.unit
+        }
+        for row in result
+    ]
