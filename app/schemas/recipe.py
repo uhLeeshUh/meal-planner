@@ -3,6 +3,13 @@ from typing import List
 
 from app.schemas.ingredient import Ingredient, IngredientCreate
 from app.schemas.recipe_ingredient import RecipeIngredient
+from app.schemas.enums import Unit
+
+class RecipeIngredientCreate(BaseModel):
+    """Schema for creating an ingredient with quantity and unit for a recipe"""
+    name: str = Field(..., description="Name of the ingredient")
+    quantity: float = Field(..., description="Amount of the ingredient")
+    unit: Unit = Field(..., description="Unit of the ingredient")
 
 class RecipeBase(BaseModel):
     name: str = Field(..., description="Name of the recipe")
@@ -14,7 +21,7 @@ class RecipeBase(BaseModel):
     image_url: str | None = Field(None, description="URL to recipe image")
 
 class RecipeCreate(RecipeBase):
-    ingredients: List[Ingredient | IngredientCreate] # allow new ingredients to be created alongside their respective recipes
+    ingredients: List[RecipeIngredientCreate] # ingredients with quantities and units for the recipe
 
 class Recipe(RecipeBase):
     id: str  # UUID will be converted to string for JSON

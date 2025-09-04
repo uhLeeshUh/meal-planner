@@ -24,3 +24,8 @@ class BaseModel(Base):
     # basic shallow serialization of models, used for testing
     def model_to_dict(self) -> dict:
         return {col.name: getattr(self, col.name) for col in self.__table__.columns}
+
+    @classmethod
+    def from_schema(cls, schema):
+        """Create a Model instance from a Pydantic schema"""
+        return cls(**schema.model_dump())

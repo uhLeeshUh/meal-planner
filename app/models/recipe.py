@@ -13,11 +13,6 @@ class Recipe(BaseModel):
     servings: Mapped[int | None] = mapped_column(Integer)
     image_url: Mapped[str | None] = mapped_column(String)
     
-    # @classmethod
-    # def from_schema(cls, schema: RecipeCreate) -> "Recipe":
-    #     """Create a Recipe instance from a Pydantic schema"""
-    #     return cls(**schema.model_dump())
-    
     # Relationships
     ingredients = relationship(
         "Ingredient",
