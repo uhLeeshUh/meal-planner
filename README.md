@@ -60,9 +60,10 @@ meal_planner/
 │   ├── api/         # API endpoints
 │   ├── core/        # Core functionality (db setup)
 │   ├── models/      # Database models
-│   └── repositories/# Business logic to interact with database
-│   └── schemas/     # Pydantic models for validation
+│   └── repositories/# Direct callers of the database
+│   └── schemas/     # Pydantic DTOs. Validation models for request/response or inter-layer contracts
 │   └── seeds/       # Db seed data
+    └── services/    # Business logic 
 ├── migrations/      # Db migrations, managed by alembic
 ├── scripts/         # App-wide scripts
 ├── tests/           # Test files
