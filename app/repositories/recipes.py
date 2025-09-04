@@ -24,3 +24,7 @@ def create_recipe(db: Session, recipe_create: RecipeCreate) -> RecipeSchema:
     db.refresh(recipe)
     
     return recipe
+
+def get_recipes(db: Session, page_number: int = 0, page_size: int = 10) -> list[Recipe]:
+    offset = (page_number - 1) * page_size
+    return db.query(Recipe).order_by(Recipe.id).offset(offset).limit(page_size).all()
