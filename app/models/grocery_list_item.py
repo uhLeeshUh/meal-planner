@@ -13,4 +13,4 @@ class GroceryListItem(BaseModel):
     unit: Mapped[str] = mapped_column(String, nullable=False) # use American standard units, eg. cups, tablespoons, teaspoons, etc.
 
     grocery_list = relationship("GroceryList", back_populates="items")
-    ingredient = relationship("Ingredient", back_populates="grocery_list_items", lazy='joined')
+    ingredient = relationship("Ingredient", back_populates="grocery_list_items", lazy='joined', order_by="Ingredient.name")
