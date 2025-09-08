@@ -14,5 +14,6 @@ class Ingredient(BaseModel):
         secondary="recipe_ingredients",
         back_populates="ingredients"
     )
+    grocery_list_items = relationship("GroceryListItem", back_populates="ingredient")
 
 

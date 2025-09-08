@@ -6,7 +6,7 @@ from app.models.ingredient import Ingredient
 from app.models.recipe import Recipe
 from app.models.recipe_ingredient import RecipeIngredient
 from app.schemas.recipe import Recipe as RecipeSchema, RecipeCreate
-from app.repositories.ingredients import create as ingredient_create
+from app.schemas.grocery_list import IngredientListItem
 
 def create_recipe(db: Session, recipe_create: RecipeCreate) -> RecipeSchema:
     # Create the recipe first (without ingredients)
@@ -49,7 +49,7 @@ def get_recipes(db: Session, page_number: int = 0, page_size: int = 10) -> list[
     offset = (page_number - 1) * page_size
     return db.query(Recipe).order_by(Recipe.id).offset(offset).limit(page_size).all()
 
-def get_ingredients_list_for_recipes(db: Session, recipe_ids: list[UUID]) -> list[dict]:
+def get_ingredients_list_for_recipes(db: Session, recipe_ids: list[UUID]) -> list[IngredientListItem]:
     """
     Get aggregated ingredients for a list of recipes.
     Returns a list of dictionaries with ingredient name, total quantity, and unit.
