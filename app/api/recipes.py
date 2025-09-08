@@ -1,16 +1,32 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import text
 from typing import List
+from uuid import UUID
 
 from app.core.database import get_db
 from app.models.recipe import Recipe as RecipeModel
+from app.models.recipe_ingredient import RecipeIngredient
+from app.models.ingredient import Ingredient
 from app.schemas.recipe import Recipe, RecipeCreate
 
 router = APIRouter()
 
 @router.get("/recipes/", response_model=List[Recipe])
 def get_recipes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    recipes = db.query(RecipeModel).offset(skip).limit(limit).all()
+    recipes = (
+        db.query(RecipeModel)
+        .options(
+            joinedload(RecipeModel.recipe_ingredients)
+            .joinedload(RecipeIngredient.ingredient)
+        )
+        .join(RecipeIngredient)
+        .join(Ingredient)
+        .order_by(RecipeModel.name, Ingredient.name)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
     return recipes
 
 @router.post("/recipes/", response_model=Recipe)

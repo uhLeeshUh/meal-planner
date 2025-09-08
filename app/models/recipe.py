@@ -14,8 +14,4 @@ class Recipe(BaseModel):
     image_url: Mapped[str | None] = mapped_column(String)
     
     # Relationships
-    ingredients = relationship(
-        "Ingredient",
-        secondary="recipe_ingredients",
-        back_populates="recipes"
-    )
+    recipe_ingredients = relationship("RecipeIngredient", back_populates="recipe", lazy="joined")

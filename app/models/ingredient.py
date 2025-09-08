@@ -9,11 +9,6 @@ class Ingredient(BaseModel):
  
 
     # Relationships
-    recipes = relationship(
-        "Recipe",
-        secondary="recipe_ingredients",
-        back_populates="ingredients"
-    )
     grocery_list_items = relationship("GroceryListItem", back_populates="ingredient")
-
+    recipe_ingredients = relationship("RecipeIngredient", back_populates="ingredient")
 

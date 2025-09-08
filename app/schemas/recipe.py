@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import List
+from uuid import UUID
 
-from app.schemas.ingredient import Ingredient, IngredientCreate
 from app.schemas.recipe_ingredient import RecipeIngredient
 from app.schemas.enums import Unit
 
@@ -24,8 +24,8 @@ class RecipeCreate(RecipeBase):
     ingredients: List[RecipeIngredientCreate] # ingredients with quantities and units for the recipe
 
 class Recipe(RecipeBase):
-    id: str  # UUID will be converted to string for JSON
-    recipe_ingredients: List[RecipeIngredient]
+    id: UUID
+    recipe_ingredients: List[RecipeIngredient] = []
 
     class Config:
         from_attributes = True  # Allows conversion from SQLAlchemy model 
