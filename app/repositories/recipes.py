@@ -1,5 +1,5 @@
 from uuid import UUID
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 
 from app.models.ingredient import Ingredient
@@ -46,8 +46,25 @@ def create_recipe(db: Session, recipe_create: RecipeCreate) -> RecipeSchema:
     return recipe
 
 def get_recipes(db: Session, page_number: int = 0, page_size: int = 10) -> list[Recipe]:
-    offset = (page_number - 1) * page_size
-    return db.query(Recipe).order_by(Recipe.id).offset(offset).limit(page_size).all()
+    offset = page_number * page_size
+    recipes = (
+        db.query(Recipe)
+        .options(
+            joinedload(Recipe.recipe_ingredients)
+            .joinedload(RecipeIngredient.ingredient)
+        )
+        .order_by(Recipe.name)
+        .offset(offset)
+        .limit(page_size)
+        .all()
+    )
+    
+    # Sort recipe_ingredients by ingredient name for each recipe
+    # This is still efficient since we're sorting small lists (typically < 20 items)
+    for recipe in recipes:
+        recipe.recipe_ingredients.sort(key=lambda ri: ri.ingredient.name.lower())
+    
+    return recipes
 
 def get_ingredients_list_for_recipes(db: Session, recipe_ids: list[UUID]) -> list[IngredientListItem]:
     """
