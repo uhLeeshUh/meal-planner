@@ -1,13 +1,12 @@
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session
 from typing import List
 
 from app.core.database import get_db
 from app.models.recipe import Recipe as RecipeModel
-from app.models.recipe_ingredient import RecipeIngredient
 from app.schemas.recipe import Recipe, RecipeCreate
-from app.repositories.recipes import get_recipes as get_recipes_repo
+from app.repositories.recipes import get_recipes as get_recipes_repo, get_recipe as get_recipe_repo
 
 router = APIRouter()
 
@@ -26,7 +25,7 @@ def create_recipe(recipe: RecipeCreate, db: Session = Depends(get_db)):
 
 @router.get("/recipes/{recipe_id}", response_model=Recipe)
 def get_recipe(recipe_id: UUID, db: Session = Depends(get_db)):
-    recipe = db.query(RecipeModel).filter(RecipeModel.id == recipe_id).first()
+    recipe = get_recipe_repo(db, recipe_id)
     if recipe is None:
         raise HTTPException(status_code=404, detail="Recipe not found")
     return recipe 

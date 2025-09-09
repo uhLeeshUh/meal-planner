@@ -8,6 +8,14 @@ from app.models.recipe_ingredient import RecipeIngredient
 from app.schemas.recipe import Recipe as RecipeSchema, RecipeCreate
 from app.schemas.grocery_list import IngredientListItem
 
+def sort_recipe_ingredients_alpha(recipe: Recipe) -> None:
+    """
+    Sort a recipe's recipe_ingredients list by Ingredient.name (case-insensitive).
+    Mutates the passed-in recipe.
+    """
+    if recipe and getattr(recipe, 'recipe_ingredients', None):
+        recipe.recipe_ingredients.sort(key=lambda ri: ri.ingredient.name.lower())
+
 def create_recipe(db: Session, recipe_create: RecipeCreate) -> RecipeSchema:
     # Create the recipe first (without ingredients)
     recipe_data = recipe_create.model_dump(exclude={'ingredients'})
@@ -62,9 +70,27 @@ def get_recipes(db: Session, page_number: int = 0, page_size: int = 10) -> list[
     # Sort recipe_ingredients by ingredient name for each recipe
     # This is still efficient since we're sorting small lists (typically < 20 items)
     for recipe in recipes:
-        recipe.recipe_ingredients.sort(key=lambda ri: ri.ingredient.name.lower())
+        sort_recipe_ingredients_alpha(recipe)
     
     return recipes
+
+"""
+Fetch a single recipe with its ingredients eagerly loaded and sort
+the ingredients by name in Python. SQLAlchemy does not support ordering
+by Ingredient.name in the SQL layer, so we do it in Python.
+"""
+def get_recipe(db: Session, recipe_id: UUID) -> Recipe:
+    recipe = (
+        db.query(Recipe)
+        .options(
+            joinedload(Recipe.recipe_ingredients).joinedload(RecipeIngredient.ingredient)
+        )
+        .filter(Recipe.id == recipe_id)
+        .first()
+    )
+    if recipe:
+        sort_recipe_ingredients_alpha(recipe)
+    return recipe
 
 def get_ingredients_list_for_recipes(db: Session, recipe_ids: list[UUID]) -> list[IngredientListItem]:
     """
