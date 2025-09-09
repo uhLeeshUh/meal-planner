@@ -12,15 +12,14 @@ A FastAPI-based meal planning application that helps users manage their meal pla
 
 ## Setup
 
-1. Create a virtual environment:
+1. Create a virtual environment, using poetry (if you don't have poetry globally installed, do so first):
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # On Windows use: venv\Scripts\activate
+poetry env activate
 ```
 
 2. Install dependencies:
 ```bash
-pip install -r requirements.txt
+poetry install
 ```
 
 3. Set up environment variables:
@@ -36,7 +35,7 @@ docker-compose up db
 
 5. Run the application:
 ```bash
-uvicorn app.main:app --reload
+poetry run uvicorn app.main:app --reload
 ```
 
 For migrating the database:
@@ -51,6 +50,14 @@ alembic upgrade head
 
 The API will be available at `http://localhost:8000`
 API documentation will be available at `http://localhost:8000/docs`
+
+## Development notes
+
+The python virtual env is managed by Poetry. 
+
+To add new dependencies, use the `poetry add <package>` command. 
+
+To run commands in the Poetry environment, use `poetry run <command>`
 
 ## Project Structure
 
