@@ -12,10 +12,18 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python packages
-COPY requirements.txt .
+# Install Poetry
 RUN pip install --upgrade pip \
-    && pip install -r requirements.txt
+    && pip install poetry
+
+# Configure Poetry: Don't create virtual environment, install dependencies to system Python
+RUN poetry config virtualenvs.create false
+
+# Copy Poetry configuration files
+COPY pyproject.toml poetry.lock* ./
+
+# Install dependencies (--no-root skips installing the project itself, only installs dependencies)
+RUN poetry install --no-root --no-interaction --no-ansi
 
 # Copy the application code
 COPY . .
