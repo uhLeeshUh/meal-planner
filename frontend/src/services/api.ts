@@ -46,18 +46,38 @@ export const groceryListAPI = {
   },
 };
 
-// Web scraping utility (to be implemented with backend endpoint)
+// Web scraping utility
 export const scrapingAPI = {
   // Scrape recipe data from URL
   scrapeRecipe: async (url: string): Promise<Partial<RecipeCreate>> => {
-    // TODO: This would need a backend endpoint to handle web scraping
-    // For now, return empty data
-    console.log('Scraping recipe from:', url);
+    const response = await apiClient.post('/recipes/scrape', { url });
+    const scrapedData = response.data;
+
+    // Handle error response (backend returns string on error)
+    if (typeof scrapedData === 'string') {
+      throw new Error(scrapedData);
+    }
+
+    // Parse yields (could be "4 servings", "4", etc.)
+    let servings: number | undefined;
+    if (scrapedData.yields) {
+      const yieldsMatch = scrapedData.yields.toString().match(/\d+/);
+      if (yieldsMatch) {
+        servings = parseInt(yieldsMatch[0], 10);
+      }
+    }
+
+    // Map backend response to frontend RecipeCreate format
+    // total_time might be combined prep+cook time, so we'll assign it to cook_time
+    // If you need to split it, you'd need backend changes
+    const cookTime = scrapedData.total_time ? parseInt(scrapedData.total_time.toString(), 10) : 0;
+
     return {
-      name: '',
-      cooking_instructions: '',
-      cook_time: 0,
-      ingredients: [],
+      name: scrapedData.name || '',
+      cooking_instructions: scrapedData.cooking_instructions || '',
+      cook_time: cookTime,
+      servings: servings,
+      ingredients: scrapedData.ingredients || [],
     };
   },
 };

@@ -28,4 +28,7 @@ class Recipe(RecipeBase):
     recipe_ingredients: List[RecipeIngredient] = []
 
     class Config:
-        from_attributes = True  # Allows conversion from SQLAlchemy model 
+        from_attributes = True  # Allows conversion from SQLAlchemy model
+
+class ScrapeRecipeRequest(BaseModel):
+    url: str = Field(..., description="URL of the recipe to scrape") 

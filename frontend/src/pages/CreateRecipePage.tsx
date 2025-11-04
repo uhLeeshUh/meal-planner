@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { RecipeCreate, RecipeIngredientCreate } from '../types';
 import { recipeAPI, scrapingAPI } from '../services/api';
+import { UNITS, getUnitLabel } from '../constants/units';
 
 const CreateRecipePage = () => {
   const navigate = useNavigate();
@@ -22,13 +23,8 @@ const CreateRecipePage = () => {
   const [newIngredient, setNewIngredient] = useState<RecipeIngredientCreate>({
     name: '',
     quantity: 0,
-    unit: 'cups'
+    unit: 'cup' // Default unit matching backend enum
   });
-
-  const units = [
-    'cups', 'tbsp', 'tsp', 'oz', 'lbs', 'g', 'kg', 'ml', 'l', 
-    'pieces', 'cloves', 'slices', 'whole', 'pinch', 'dash'
-  ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -84,7 +80,7 @@ const CreateRecipePage = () => {
     setNewIngredient({
       name: '',
       quantity: 0,
-      unit: 'cups'
+      unit: 'cup' // Default unit matching backend enum
     });
   };
 
@@ -234,8 +230,8 @@ const CreateRecipePage = () => {
                 }))}
                 className="unit-select"
               >
-                {units.map(unit => (
-                  <option key={unit} value={unit}>{unit}</option>
+                {UNITS.map(unit => (
+                  <option key={unit} value={unit}>{getUnitLabel(unit)}</option>
                 ))}
               </select>
               <input
@@ -262,7 +258,7 @@ const CreateRecipePage = () => {
             {recipe.ingredients.map((ingredient, index) => (
               <li key={index} className="ingredient-item">
                 <span>
-                  {ingredient.quantity} {ingredient.unit} {ingredient.name}
+                  {ingredient.quantity} {getUnitLabel(ingredient.unit)} {ingredient.name}
                 </span>
                 <button
                   type="button"
