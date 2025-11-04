@@ -41,11 +41,11 @@ poetry run uvicorn app.main:app --reload
 For migrating the database:
 1. From project root, run a migration after making data model changes:
 ```bash
-alembic revision --autogenerate -m "description of your changes"
+poetry run alembic revision --autogenerate -m "description of your changes"
 ```
 2. Apply the change
 ```bash
-alembic upgrade head
+poetry run alembic upgrade head
 ```
 
 The API will be available at `http://localhost:8000`
