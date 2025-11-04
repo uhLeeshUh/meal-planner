@@ -28,11 +28,15 @@ RUN poetry install --no-root --no-interaction --no-ansi
 # Copy the application code
 COPY . .
 
+# Copy and make startup script executable
+COPY scripts/start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
 # Set Python path to include the current directory
 ENV PYTHONPATH=/app
 
 # Expose the port FastAPI will run on
 EXPOSE 8000
 
-# Command to run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Command to run migrations and start the application
+CMD ["/app/start.sh"]
