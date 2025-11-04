@@ -9,6 +9,7 @@ const RecipeViewPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [addingToGroceryList, setAddingToGroceryList] = useState(false);
+  const [multiplier, setMultiplier] = useState(1);
 
   useEffect(() => {
     if (id) {
@@ -34,8 +35,11 @@ const RecipeViewPage = () => {
 
     try {
       setAddingToGroceryList(true);
+      // Add the recipe ID multiple times based on multiplier
+      // The backend will automatically sum the ingredient quantities
+      const recipeIds = Array(multiplier).fill(recipe.id);
       const groceryList = await groceryListAPI.createGroceryList({
-        recipe_ids: [recipe.id]
+        recipe_ids: recipeIds
       });
       
       // Navigate to the grocery list page
@@ -64,6 +68,24 @@ const RecipeViewPage = () => {
         <div className="recipe-title-section">
           <h1>{recipe.name}</h1>
           <div className="recipe-actions">
+            <div className="multiplier-control">
+              <label htmlFor="multiplier">Recipe Multiplier:</label>
+              <input
+                type="number"
+                id="multiplier"
+                min="1"
+                max="10"
+                value={multiplier}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value, 10);
+                  if (!isNaN(value)) {
+                    setMultiplier(Math.max(1, Math.min(10, value)));
+                  }
+                }}
+                className="multiplier-input"
+              />
+              <span className="multiplier-label">{multiplier}x</span>
+            </div>
             <button 
               onClick={handleAddToGroceryList}
               disabled={addingToGroceryList}
@@ -113,12 +135,19 @@ const RecipeViewPage = () => {
 
       <div className="recipe-content">
         <div className="recipe-ingredients">
-          <h2>Ingredients</h2>
+          <h2>Ingredients {multiplier > 1 && <span className="multiplier-badge">({multiplier}x)</span>}</h2>
           <ul className="ingredients-list">
             {recipe.recipe_ingredients.map((ri) => (
               <li key={ri.id} className="ingredient-item">
                 <span className="ingredient-amount">
-                  {ri.quantity} {ri.unit}
+                  {multiplier > 1 ? (
+                    <>
+                      <span className="original-quantity">{ri.quantity}</span>
+                      <span className="multiplied-quantity"> × {multiplier} = {ri.quantity * multiplier}</span>
+                    </>
+                  ) : (
+                    ri.quantity
+                  )} {ri.unit}
                 </span>
                 <span className="ingredient-name">
                   {ri.ingredient.name}

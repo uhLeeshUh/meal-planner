@@ -1,6 +1,7 @@
 from uuid import UUID
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
+from collections import Counter
 
 from app.models.ingredient import Ingredient
 from app.models.recipe import Recipe
@@ -95,32 +96,45 @@ def get_recipe(db: Session, recipe_id: UUID) -> Recipe:
 def get_ingredients_list_for_recipes(db: Session, recipe_ids: list[UUID]) -> list[IngredientListItem]:
     """
     Get aggregated ingredients for a list of recipes.
+    Handles duplicate recipe IDs by counting occurrences and multiplying quantities.
     Returns a list of dictionaries with ingredient name, total quantity, and unit.
     """
     from app.models.recipe import Recipe
     from app.models.ingredient import Ingredient
     from app.models.recipe_ingredient import RecipeIngredient
     
-    result = db.query(
-        Ingredient.id,
-        func.sum(RecipeIngredient.quantity).label('total_quantity'),
+    # Count how many times each recipe_id appears (for multipliers)
+    recipe_counts = Counter(recipe_ids)
+    unique_recipe_ids = list(recipe_counts.keys())
+    
+    # Query RecipeIngredient rows for the unique recipe IDs
+    recipe_ingredients = db.query(
+        RecipeIngredient.recipe_id,
+        RecipeIngredient.ingredient_id,
+        RecipeIngredient.quantity,
         RecipeIngredient.unit
-    ).join(
-        RecipeIngredient, Ingredient.id == RecipeIngredient.ingredient_id
     ).join(
         Recipe, RecipeIngredient.recipe_id == Recipe.id
     ).filter(
-        Recipe.id.in_(recipe_ids)
-    ).group_by(
-        Ingredient.id, RecipeIngredient.unit
+        Recipe.id.in_(unique_recipe_ids)
     ).all()
+    
+    # Aggregate quantities, multiplying by the count of each recipe_id
+    aggregated = {}
+    for ri in recipe_ingredients:
+        multiplier = recipe_counts[ri.recipe_id]
+        key = (ri.ingredient_id, ri.unit)
+        
+        if key not in aggregated:
+            aggregated[key] = 0
+        aggregated[key] += ri.quantity * multiplier
     
     # Convert to list of dictionaries
     return [
         {
-            'ingredient_id': row.id,
-            'total_quantity': row.total_quantity,
-            'unit': row.unit
+            'ingredient_id': ingredient_id,
+            'total_quantity': total_quantity,
+            'unit': unit
         }
-        for row in result
+        for (ingredient_id, unit), total_quantity in aggregated.items()
     ]
