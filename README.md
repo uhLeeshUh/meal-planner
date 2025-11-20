@@ -66,7 +66,8 @@ The python virtual env is managed by Poetry.
 
 To add new dependencies, use the `poetry add <package>` command. 
 
-To run commands in the Poetry environment, use `poetry run <command>`
+To run commands in the Poetry environment, use `poetry run <command>`. 
+For example, to run a script, enter the venv `poetry env activate` then `poetry run python3 ./scripts/{your_script}.py` 
 
 ## Project Structure
 

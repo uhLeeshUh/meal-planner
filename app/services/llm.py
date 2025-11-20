@@ -15,8 +15,14 @@ class LLMService:
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
             raise ValueError("OPENAI_API_KEY environment variable is not set")
+        
         self.client = OpenAI(api_key=api_key)
         self.model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+        self.embeddings_model = "text-embedding-3-small"
+
+    def generate_embedding(self, text: str):
+        res = self.client.embeddings.create(model=self.embeddings_model, input=text)
+        return res.data[0].embedding
     
     def generate_meal_plan(self, request: MealPlanRequest):
         """

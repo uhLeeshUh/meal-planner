@@ -14,16 +14,17 @@ pydantic = "^2.10.0"
 python-dotenv = "^1.0.0"
 alembic = "^1.12.1"
 pytest = "^7.4.3"
-httpx = "^0.25.1"
+httpx = ">=0.25.1"
 isort = "^6.0.1"
 psycopg2-binary = "^2.9.10"
 sqlalchemy = "^2.0.36"
 recipe-scrapers = "^15.9.0"
 openai = "^1.12.0"
+chromadb = "^1.3.5"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
-httpx = "^0.25.1"
+httpx = ">=0.25.1"
 
 [build-system]
 requires = ["poetry-core"]
