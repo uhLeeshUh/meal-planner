@@ -19,6 +19,7 @@ isort = "^6.0.1"
 psycopg2-binary = "^2.9.10"
 sqlalchemy = "^2.0.36"
 recipe-scrapers = "^15.9.0"
+openai = "^1.12.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
