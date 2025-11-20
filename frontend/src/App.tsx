@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage';
 import RecipeViewPage from './pages/RecipeViewPage';
 import CreateRecipePage from './pages/CreateRecipePage';
 import GroceryListPage from './pages/GroceryListPage';
+import MealPlanPage from './pages/MealPlanPage';
 import './App.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
             <Route path="/recipe/:id" element={<RecipeViewPage />} />
             <Route path="/create-recipe" element={<CreateRecipePage />} />
             <Route path="/grocery-list/:id?" element={<GroceryListPage />} />
+            <Route path="/meal-plan" element={<MealPlanPage />} />
           </Routes>
         </main>
       </div>

@@ -72,3 +72,17 @@ export interface PaginationState {
 export interface SelectedRecipes {
   [recipeId: string]: boolean;
 }
+
+// Meal Plan types
+export interface MealPlanRequest {
+  num_meals: number;
+  total_time_minutes?: number;
+  preferred_ingredients?: string[];
+  dietary_restrictions?: string[];
+  cuisine_preferences?: string[];
+}
+
+export interface MealPlanResponse {
+  recipes: Recipe[];
+  grocery_list_id?: string;
+}

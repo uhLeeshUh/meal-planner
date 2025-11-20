@@ -1,6 +1,6 @@
 from uuid import UUID
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from collections import Counter
 
 from app.models.ingredient import Ingredient
@@ -92,6 +92,62 @@ def get_recipe(db: Session, recipe_id: UUID) -> Recipe:
     if recipe:
         sort_recipe_ingredients_alpha(recipe)
     return recipe
+
+def search_recipes_by_ingredients(
+    db: Session,
+    ingredient_names: list[str],
+    max_time_minutes: int | None = None,
+    limit: int = 20
+) -> list[Recipe]:
+    """
+    Search for recipes that contain any of the specified ingredients.
+    Optionally filter by total time (prep_time + cook_time).
+    """
+    # Start with a subquery to find recipe IDs that match ingredients
+    subquery = (
+        db.query(Recipe.id)
+        .distinct()
+        .join(RecipeIngredient, Recipe.id == RecipeIngredient.recipe_id)
+        .join(Ingredient, RecipeIngredient.ingredient_id == Ingredient.id)
+    )
+    
+    # Filter by ingredient names (case-insensitive)
+    if ingredient_names:
+        ingredient_filters = [
+            func.lower(Ingredient.name).ilike(f"%{name.lower()}%")
+            for name in ingredient_names
+        ]
+        subquery = subquery.filter(or_(*ingredient_filters))
+    
+    # Get the matching recipe IDs
+    matching_recipe_ids = [row[0] for row in subquery.all()]
+    
+    if not matching_recipe_ids:
+        return []
+    
+    # Now query the full recipes with their ingredients
+    query = (
+        db.query(Recipe)
+        .filter(Recipe.id.in_(matching_recipe_ids))
+        .options(
+            joinedload(Recipe.recipe_ingredients)
+            .joinedload(RecipeIngredient.ingredient)
+        )
+    )
+    
+    # Filter by total time if provided
+    if max_time_minutes is not None:
+        # Handle NULL prep_time by treating it as 0
+        total_time = func.coalesce(Recipe.prep_time, 0) + Recipe.cook_time
+        query = query.filter(total_time <= max_time_minutes)
+    
+    recipes = query.limit(limit).all()
+    
+    # Sort recipe_ingredients by ingredient name for each recipe
+    for recipe in recipes:
+        sort_recipe_ingredients_alpha(recipe)
+    
+    return recipes
 
 def get_ingredients_list_for_recipes(db: Session, recipe_ids: list[UUID]) -> list[IngredientListItem]:
     """

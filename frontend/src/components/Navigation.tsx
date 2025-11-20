@@ -23,6 +23,11 @@ const Navigation = () => {
               Grocery List
             </Link>
           </li>
+          <li className="nav-item">
+            <Link to="/meal-plan" className="nav-link">
+              Meal Plan
+            </Link>
+          </li>
         </ul>
       </div>
     </nav>

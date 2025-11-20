@@ -5,6 +5,10 @@ A FastAPI-based meal planning application that helps users manage their meal pla
 ## Features
 
 - Create and manage meal plans
+- **AI-powered meal plan generation** using OpenAI
+  - **Smart recipe selection**: First tries to use recipes from your existing database
+  - **Intelligent fallback**: Generates new recipes only when needed to fill the meal plan
+  - Searches your database by preferred ingredients and time constraints
 - Store and retrieve recipes
 - Generate shopping lists
 - RESTful API endpoints
@@ -27,6 +31,11 @@ poetry install
 cp .env.example .env
 # Edit .env with your configuration
 ```
+
+   Required environment variables:
+   - `DATABASE_URL`: PostgreSQL connection string (e.g., `postgresql://user:password@localhost:5432/meal_planner`)
+   - `OPENAI_API_KEY`: Your OpenAI API key (required for meal plan generation)
+   - `OPENAI_MODEL`: (Optional) OpenAI model to use (defaults to `gpt-4o-mini`)
 
 4. Start up the postgres docker container
 ```bash

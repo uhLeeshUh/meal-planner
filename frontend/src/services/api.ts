@@ -82,4 +82,26 @@ export const scrapingAPI = {
   },
 };
 
+// Meal Plan API endpoints
+export interface MealPlanRequest {
+  num_meals: number;
+  total_time_minutes?: number;
+  preferred_ingredients?: string[];
+  dietary_restrictions?: string[];
+  cuisine_preferences?: string[];
+}
+
+export interface MealPlanResponse {
+  recipes: Recipe[];
+  grocery_list_id?: string;
+}
+
+export const mealPlanAPI = {
+  // Generate a meal plan using LLM
+  generateMealPlan: async (request: MealPlanRequest): Promise<MealPlanResponse> => {
+    const response = await apiClient.post('/meal-plan/generate', request);
+    return response.data;
+  },
+};
+
 export default apiClient;
